@@ -1,0 +1,25 @@
+name: flutter_app
+description: A Flutter project to demonstrate Mapbox and related functionalities.
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.17.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  get: ^4.6.5
+  http: ^0.13.5
+  latlong2: ^0.8.1
+  mapbox_gl: ^0.14.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
