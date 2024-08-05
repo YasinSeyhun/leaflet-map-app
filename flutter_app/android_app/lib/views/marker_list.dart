@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
-import 'package:latlong2/latlong.dart' as latlong2;
-import 'package:flutter_app/controllers/marker_controller.dart';
-import 'package:mapbox_gl/mapbox_gl.dart' as mapbox_gl;
+import 'package:latlong2/latlong.dart';
+import 'package:flutter_app/Controllers/marker_controller.dart';
 
 class MarkerList extends StatelessWidget {
-  final mapbox_gl.MapboxMapController mapController;
+  final MapController mapController;
 
   MarkerList({required this.mapController});
 
@@ -21,8 +21,7 @@ class MarkerList extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: Text(
                 'MARKER LIST',
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
             Expanded(
@@ -32,27 +31,23 @@ class MarkerList extends StatelessWidget {
                   itemCount: markers.length,
                   itemBuilder: (context, index) {
                     final marker = markers[index];
-                    double distance = const latlong2.Distance().as(
-                      latlong2.LengthUnit.Kilometer,
-                      latlong2.LatLng(41.0082, 28.9784),
-                      latlong2.LatLng(marker.lat, marker.lng),
-                    );
-
-                    String distanceText = '';
+                    double distance = 0;
                     if (index > 0) {
                       final previousMarker = markers[index - 1];
-                      distanceText =
-                          'Distance: ${distance.toStringAsFixed(2)} km';
+                      distance = const Distance().as(
+                        LengthUnit.Kilometer,
+                        LatLng(previousMarker.lat, previousMarker.lng),
+                        LatLng(marker.lat, marker.lng),
+                      );
                     }
-
                     return ListTile(
                       title: Text(marker.name),
-                      subtitle: Text(distanceText),
+                      subtitle: Text('${distance.toStringAsFixed(2)} km'),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.edit, color: Colors.blue),
+                            icon: Icon(Icons.edit, color: Colors.blue),
                             onPressed: () {
                               showDialog(
                                 context: context,
@@ -60,16 +55,16 @@ class MarkerList extends StatelessWidget {
                                   TextEditingController nameController =
                                       TextEditingController(text: marker.name);
                                   return AlertDialog(
-                                    title: const Text('Marker Güncelle'),
+                                    title: Text('Marker Güncelle'),
                                     content: TextField(
                                       controller: nameController,
-                                      decoration: const InputDecoration(
+                                      decoration: InputDecoration(
                                           labelText: 'Marker İsmi'),
                                     ),
                                     actions: [
                                       TextButton(
                                         onPressed: () => Navigator.pop(context),
-                                        child: const Text('İptal'),
+                                        child: Text('İptal'),
                                       ),
                                       TextButton(
                                         onPressed: () {
@@ -77,7 +72,7 @@ class MarkerList extends StatelessWidget {
                                           markerController.updateMarker(marker);
                                           Navigator.pop(context);
                                         },
-                                        child: const Text('Kaydet'),
+                                        child: Text('Kaydet'),
                                       ),
                                     ],
                                   );
@@ -86,22 +81,20 @@ class MarkerList extends StatelessWidget {
                             },
                           ),
                           IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
+                            icon: Icon(Icons.delete, color: Colors.red),
                             onPressed: () {
                               markerController.deleteMarker(
                                   marker.lat, marker.lng);
                             },
                           ),
                           IconButton(
-                            icon: const Icon(Icons.location_on,
-                                color: Colors.green),
+                            icon: Icon(Icons.location_on, color: Colors.green),
                             onPressed: () {
-                              mapController.animateCamera(
-                                  mapbox_gl.CameraUpdate.newLatLngZoom(
-                                mapbox_gl.LatLng(marker.lat, marker.lng),
-                                13.0,
-                              ));
-                              Navigator.of(context).pop();
+                              mapController.move(
+                                LatLng(marker.lat, marker.lng),
+                                13.0, // Zoom level
+                              );
+                              Navigator.of(context).pop(); // Drawer'ı kapat
                             },
                           ),
                         ],

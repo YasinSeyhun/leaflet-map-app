@@ -1,43 +1,83 @@
-import 'dart:ui';
-import 'package:mapbox_gl/mapbox_gl.dart' as mapbox_gl;
+import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' as latlong2;
 import 'package:flutter_app/models/marker_model.dart';
+import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
+import 'package:get/get.dart';
+import 'package:flutter_app/controllers/marker_controller.dart';
 
 class MapMarkerLayer {
-  final mapbox_gl.MapboxMapController mapController;
+  final MapController mapController;
+  final PopupController popupController = PopupController();
+  final MarkerController markerController = Get.put(MarkerController());
 
   MapMarkerLayer({required this.mapController});
 
-  void addMarkers(List<MarkerModel> markers) {
-    for (var marker in markers) {
-      _addMarker(marker);
-    }
+  List<Marker> createMarkers(List<MarkerModel> markers) {
+    return markers.map((marker) {
+      final color = getMarkerColor(marker);
+      return Marker(
+        width: 80.0,
+        height: 80.0,
+        point: latlong2.LatLng(marker.lat, marker.lng),
+        builder: (ctx) => GestureDetector(
+          onTap: () {
+            popupController.showPopupsOnlyFor([
+              Marker(
+                point: latlong2.LatLng(marker.lat, marker.lng),
+                builder: (ctx) => Container(),
+              ),
+            ]);
+          },
+          child: Icon(
+            Icons.location_on,
+            color: color,
+            size: 40.0,
+          ),
+        ),
+      );
+    }).toList();
   }
 
-  void _addMarker(MarkerModel marker) {
-    double distance = const latlong2.Distance().as(
+  Color getMarkerColor(MarkerModel marker) {
+    final distance = latlong2.Distance().as(
       latlong2.LengthUnit.Kilometer,
-      latlong2.LatLng(41.0082, 28.9784), // İstanbul
+      latlong2.LatLng(41.0082, 28.9784),
       latlong2.LatLng(marker.lat, marker.lng),
     );
 
-    String color;
     if (distance < 500) {
-      color = "green";
+      return Colors.green;
     } else if (distance >= 500 && distance < 1000) {
-      color = "orange";
+      return Colors.orange;
     } else {
-      color = "red";
+      return Colors.red;
     }
+  }
 
-    mapController.addSymbol(mapbox_gl.SymbolOptions(
-      geometry: mapbox_gl.LatLng(marker.lat, marker.lng),
-      iconImage: "marker-15",
-      iconSize: 1.5,
-      textField: marker.name,
-      textOffset: const Offset(0, 2),
-      textSize: 12.0,
-      textColor: color,
-    ));
+  PopupMarkerLayerWidget buildPopupMarkerLayerWidget() {
+    return PopupMarkerLayerWidget(
+      options: PopupMarkerLayerOptions(
+        markers: createMarkers(markerController.markers),
+        popupController: popupController,
+        markerTapBehavior: MarkerTapBehavior.togglePopupAndHideRest(),
+        popupDisplayOptions: PopupDisplayOptions(
+          builder: (BuildContext context, Marker marker) {
+            final markerModel = markerController.markers.firstWhere(
+              (m) =>
+                  m.lat == marker.point.latitude &&
+                  m.lng == marker.point.longitude,
+              orElse: () => MarkerModel(id: 0, lat: 0, lng: 0, name: ''),
+            );
+            return Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('${markerModel.name}'),
+              ),
+            );
+          },
+        ),
+      ),
+    );
   }
 }

@@ -12,12 +12,12 @@ class MarkerService {
         var data = json.decode(response.body) as List;
         return data.map((json) => MarkerModel.fromJson(json)).toList();
       } else {
-        print("Failed to fetch markers. Status code: ${response.statusCode}");
+        throw Exception('Failed to load markers');
       }
     } catch (e) {
       print("Error fetching markers: $e");
+      throw e;
     }
-    return [];
   }
 
   Future<void> addMarker(MarkerModel marker) async {
@@ -27,13 +27,12 @@ class MarkerService {
         headers: {'Content-Type': 'application/json'},
         body: json.encode(marker.toJson()),
       );
-      if (response.statusCode == 200) {
-        return;
-      } else {
-        print("Failed to add marker. Status code: ${response.statusCode}");
+      if (response.statusCode != 200) {
+        throw Exception('Failed to add marker');
       }
     } catch (e) {
       print("Error adding marker: $e");
+      throw e;
     }
   }
 
@@ -44,29 +43,28 @@ class MarkerService {
         headers: {'Content-Type': 'application/json'},
         body: json.encode(marker.toJson()),
       );
-      if (response.statusCode == 200) {
-        return;
-      } else {
-        print("Failed to update marker. Status code: ${response.statusCode}");
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update marker');
       }
     } catch (e) {
       print("Error updating marker: $e");
+      throw e;
     }
   }
 
   Future<void> deleteMarker(double lat, double lng) async {
     try {
       final response = await http.delete(
-        Uri.parse('$apiUrl/deleteMarker?lat=$lat&lng=$lng'),
+        Uri.parse('$apiUrl/deleteMarker'),
         headers: {'Content-Type': 'application/json'},
+        body: json.encode({'lat': lat, 'lng': lng}),
       );
-      if (response.statusCode == 200) {
-        return;
-      } else {
-        print("Failed to delete marker. Status code: ${response.statusCode}");
+      if (response.statusCode != 200) {
+        throw Exception('Failed to delete marker');
       }
     } catch (e) {
       print("Error deleting marker: $e");
+      throw e;
     }
   }
 }

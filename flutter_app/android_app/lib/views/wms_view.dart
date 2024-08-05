@@ -1,23 +1,17 @@
-// import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:flutter_map/flutter_map.dart';
 
-// class WmsView {
-//   final MapboxMapController mapController;
+class WmsView {
+  static final WMSTileLayerOptions wmsLayer1 = WMSTileLayerOptions(
+    baseUrl: 'https://ows.terrestris.de/osm/service?',
+    layers: ['OSM-WMS'],
+    format: 'image/png',
+    transparent: true,
+  );
 
-//   WmsView({required this.mapController});
-
-//   void addWmsLayer1() {
-//     mapController.setStyleUrl("mapbox://styles/yasinseyhun/clzb70ht1008801qq7q0mfx4m");
-//   }
-
-//   void addWmsLayer2() {
-//     mapController.setStyleUrl("mapbox://styles/yasinseyhun/clzb6t88p007r01qy55nt8cdl");
-//   }
-
-//   void removeWmsLayer1() {
-//     mapController.setStyleUrl("mapbox://styles/mapbox/streets-v11"); // Load default style
-//   }
-
-//   void removeWmsLayer2() {
-//     mapController.setStyleUrl("mapbox://styles/mapbox/streets-v11"); // Load default style
-//   }
-// }
+  static final WMSTileLayerOptions wmsLayer2 = WMSTileLayerOptions(
+    baseUrl: 'https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?',
+    layers: ['MODIS_Terra_CorrectedReflectance_TrueColor'],
+    format: 'image/png',
+    transparent: true,
+  );
+}
