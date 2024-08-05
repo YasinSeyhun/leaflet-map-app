@@ -5,6 +5,7 @@ import 'package:flutter_app/models/marker_model.dart';
 import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
 import 'package:get/get.dart';
 import 'package:flutter_app/controllers/marker_controller.dart';
+import 'package:latlong2/latlong.dart';
 
 class MapMarkerLayer {
   final MapController mapController;
@@ -14,8 +15,12 @@ class MapMarkerLayer {
   MapMarkerLayer({required this.mapController});
 
   List<Marker> createMarkers(List<MarkerModel> markers) {
+    MarkerModel? previousMarker;
+
     return markers.map((marker) {
-      final color = getMarkerColor(marker);
+      final color = getMarkerColor(marker, previousMarker);
+      previousMarker =
+          marker; // Bir sonraki iterasyon için referans markerı güncelliyoruz.
       return Marker(
         width: 80.0,
         height: 80.0,
@@ -39,10 +44,14 @@ class MapMarkerLayer {
     }).toList();
   }
 
-  Color getMarkerColor(MarkerModel marker) {
-    final distance = latlong2.Distance().as(
+  Color getMarkerColor(MarkerModel marker, MarkerModel? previousMarker) {
+    if (previousMarker == null) {
+      return Colors.green; // İlk marker için varsayılan renk
+    }
+
+    final distance = const latlong2.Distance().as(
       latlong2.LengthUnit.Kilometer,
-      latlong2.LatLng(41.0082, 28.9784),
+      latlong2.LatLng(previousMarker.lat, previousMarker.lng),
       latlong2.LatLng(marker.lat, marker.lng),
     );
 
