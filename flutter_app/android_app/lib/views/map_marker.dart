@@ -5,7 +5,6 @@ import 'package:flutter_app/models/marker_model.dart';
 import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
 import 'package:get/get.dart';
 import 'package:flutter_app/controllers/marker_controller.dart';
-import 'package:latlong2/latlong.dart';
 
 class MapMarkerLayer {
   final MapController mapController;
