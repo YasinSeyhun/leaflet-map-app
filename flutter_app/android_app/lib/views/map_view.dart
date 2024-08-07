@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart'; // Scroll eventleri için gerekli
+import 'package:flutter/gestures.dart';
 import 'package:flutter_app/controllers/map_controller.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
@@ -31,12 +31,12 @@ class _MapViewState extends State<MapView> with TickerProviderStateMixin {
         MouseZoomService(mapController: customMapController.mapController);
   }
 
-  void toggleWmsLayer1() {
-    isWmsLayer1Active.value = !isWmsLayer1Active.value;
-  }
-
-  void toggleWmsLayer2() {
-    isWmsLayer2Active.value = !isWmsLayer2Active.value;
+  void toggleWmsLayer(int layerIndex) {
+    if (layerIndex == 1) {
+      isWmsLayer1Active.value = !isWmsLayer1Active.value;
+    } else if (layerIndex == 2) {
+      isWmsLayer2Active.value = !isWmsLayer2Active.value;
+    }
   }
 
   @override
@@ -134,14 +134,14 @@ class _MapViewState extends State<MapView> with TickerProviderStateMixin {
                       heroTag: 'Wms1',
                       mini: true,
                       child: const Icon(Icons.layers),
-                      onPressed: toggleWmsLayer1,
+                      onPressed: () => toggleWmsLayer(1),
                     ),
                     const SizedBox(height: 5),
                     FloatingActionButton(
                       heroTag: 'Wms2',
                       mini: true,
                       child: const Icon(Icons.layers),
-                      onPressed: toggleWmsLayer2,
+                      onPressed: () => toggleWmsLayer(2),
                     ),
                   ],
                 ),

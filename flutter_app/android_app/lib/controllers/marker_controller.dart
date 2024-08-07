@@ -15,8 +15,9 @@ class MarkerController extends GetxController {
   Future<void> fetchMarkers() async {
     try {
       markers.value = await _markerService.fetchMarkers();
+      showSuccessMessage('Markerlar databaseden başarıyla çekildi.');
     } catch (e) {
-      print("Error fetching markers: $e");
+      showErrorMessage('Markerlar databaseden çekilirken hata oluştu.');
     }
   }
 
@@ -24,8 +25,10 @@ class MarkerController extends GetxController {
     try {
       await _markerService.addMarker(marker);
       markers.add(marker);
+      showSuccessMessage('Marker başarıyla eklendi.');
     } catch (e) {
       print("Error adding marker: $e");
+      showErrorMessage('Marker eklenirken hata oluştu.');
     }
   }
 
@@ -33,8 +36,10 @@ class MarkerController extends GetxController {
     try {
       await _markerService.updateMarker(marker);
       fetchMarkers();
+      showSuccessMessage('Marker başarıyla güncellendi.');
     } catch (e) {
       print("Error updating marker: $e");
+      showErrorMessage('Marker güncellenirken hata oluştu.');
     }
   }
 
@@ -42,8 +47,18 @@ class MarkerController extends GetxController {
     try {
       await _markerService.deleteMarker(lat, lng);
       fetchMarkers();
+      showSuccessMessage('Marker başarıyla silindi.');
     } catch (e) {
       print("Error deleting marker: $e");
+      showErrorMessage('Marker silinirken hata oluştu.');
     }
+  }
+
+  void showSuccessMessage(String message) {
+    print(message);
+  }
+
+  void showErrorMessage(String message) {
+    print(message);
   }
 }

@@ -15,8 +15,7 @@ class MapZoomService {
     final startZoom = mapController.zoom;
     final AnimationController controller = AnimationController(
       duration: duration,
-      vsync:
-          tickerProvider, // Burada `vsync` için `TickerProvider` kullanıyoruz.
+      vsync: tickerProvider, // `TickerProvider` kullanımı.
     );
 
     final Animation<double> zoomAnimation = Tween<double>(
